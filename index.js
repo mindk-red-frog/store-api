@@ -1,20 +1,23 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 const port = 3005;
+const usersRouter = require('./routes/usersRouter');
+const productsRouter = require('./routes/productsRouter');
+const ordersRouter = require('./routes/ordersRouter');
+const categoriesRouter = require('./routes/categoriesRouter');
+const rolesRouter = require('./routes/rolesRouter');
+const bodyParser = require('body-parser');
+const urlendcodedParser = bodyParser.urlencoded({extended: false});
 
-const products = require("./routes/products");
-const orders = require("./routes/orders");
-const users = require("./routes/users");
+app.use(urlendcodedParser);
 
-app.use("/products", products);
-app.use("/orders", orders);
-app.use("/users", users);
 
-app.get("/", (req, res) => {
-  res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.header("Content-Type", "application/json");
+app.use('/orders', ordersRouter);
+app.use("/users", usersRouter);
+app.use('/products',productsRouter);
+app.use('/categories', categoriesRouter);
+app.use('/roles', rolesRouter);
 
-  res.send({ message: "hello" });
-});
+
 
 app.listen(port, () => console.log(`API listening on port ${port}!`));
