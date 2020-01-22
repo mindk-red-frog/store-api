@@ -1,20 +1,19 @@
 const express = require("express");
 const app = express();
-const port = 3005;
+const PORT = process.env.PORT || 3000;
 
-const products = require("./routes/products");
-const orders = require("./routes/orders");
-const users = require("./routes/users");
+const categories = require("./routes/categoriesRouter");
+const products = require("./routes/productsRouter");
+const orders = require("./routes/ordersRouter");
+const roles = require("./routes/rolesRouter");
+const users = require("./routes/usersRouter");
+const home = require("./routes/homeRouter");
 
+app.use("/categories", categories);
 app.use("/products", products);
 app.use("/orders", orders);
+app.use("/roles", roles);
 app.use("/users", users);
+app.use("/", home);
 
-app.get("/", (req, res) => {
-  res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.header("Content-Type", "application/json");
-
-  res.send({ message: "hello" });
-});
-
-app.listen(port, () => console.log(`API listening on port ${port}!`));
+app.listen(PORT, () => console.log(`API listening on port ${PORT}!`));
