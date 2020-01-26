@@ -1,5 +1,5 @@
 const categoriesRouter  = require('express').Router();
-const categoriesController = require('../controllers/categoriesController')
+const categoriesController = require('../controllers/categories.controller')
 const AddCRUDController = require('../static/AddCRUDController');
 
 AddCRUDController(categoriesRouter, categoriesController);

@@ -1,5 +1,5 @@
 const usersRouter = require('express').Router();
-const usersController = require('../controllers/usersControllers');
+const usersController = require('../controllers/users.controllers');
 const AddCRUDController = require('../static/AddCRUDController');
 
 AddCRUDController (usersRouter, usersController);
