@@ -14,18 +14,21 @@ class productsController {
     };
 
     static async read(req, res) {
-        res.send(await new Product().find(req.params.id))
+        let id_name = {'client_id': req.params.id};
+        res.send(await new Product().find(id_name))
     };
 
     static async update(req, res) {
+        let id_name = {'client_id': req.params.id};
         let data = req.body;
-        let updateList = await new Product().store(req.params.id, data)
+        let updateList = await new Product().store(id_name, data)
             .then(() => 'update list');
         res.send(updateList);
     };
 
     static async delete(req, res) {
-        let message = await new Product().delete(req.params.id)
+        let id_name = {'client_id' : req.params.id};
+        let message = await new Product().delete(id_name)
             .then(()=> 'List deleted');
         res.status(200).send(message);
     };

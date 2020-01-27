@@ -6,7 +6,6 @@ class BaseModel {
         this.table = serviceLocator
             .get('db')
             .table(tableName);
-
     }
 
     getList() {
@@ -15,12 +14,12 @@ class BaseModel {
 
     find(id) {
         return this.table.select('*')
-            .where('id', id)
+            .where(id)
             .first()
     }
 
     delete(id) {
-        return this.table.where('id', id)
+        return this.table.where (id)
             .del()
     }
 
@@ -29,7 +28,7 @@ class BaseModel {
     }
 
     store(id, data) {
-        return this.table.where({'id' : id})
+        return this.table.where(id)
             .update(data)
     }
 
