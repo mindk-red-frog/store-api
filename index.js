@@ -1,20 +1,30 @@
-const express = require("express");
+require('dotenv').config();
+const express = require('express');
 const app = express();
-const port = 3005;
+const usersRouter = require('./routes/users.router');
+const productsRouter = require('./routes/products.router');
+const ordersRouter = require('./routes/orders.router');
+const categoriesRouter = require('./routes/categories.router');
+const rolesRouter = require('./routes/roles.router');
+const serviceLocator = require('./services/service.locator');
+const bodyParser = require('body-parser');
+const urlendcodedParser = bodyParser.urlencoded({extended: false});
 
-const products = require("./routes/products");
-const orders = require("./routes/orders");
-const users = require("./routes/users");
+app.use(urlendcodedParser);
 
-app.use("/products", products);
-app.use("/orders", orders);
-app.use("/users", users);
+serviceLocator.register('db', require('knex')({
+    client: 'pg',
+    connection: process.env.PG_CONNECTION_STRING,
+    searchPath: ['knex', 'public'],
+}));
 
-app.get("/", (req, res) => {
-  res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.header("Content-Type", "application/json");
 
-  res.send({ message: "hello" });
-});
+app.use('/orders', ordersRouter);
+app.use("/users", usersRouter);
+app.use('/products',productsRouter);
+app.use('/categories', categoriesRouter);
+app.use('/roles', rolesRouter);
 
-app.listen(port, () => console.log(`API listening on port ${port}!`));
+
+
+app.listen(process.env.APP_PORT, () => console.log(`API listening on port ${process.env.APP_PORT}!`));
