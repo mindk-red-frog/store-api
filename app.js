@@ -1,40 +1,58 @@
-const express = require('express');
+const express = require("express");
 
 const app = express();
-const morgan = require('morgan');
+const morgan = require("morgan");
 
-const productRouter = require('./routes/productRoutes');
-const orderRouter = require('./routes/orderRoutes');
-const categoryRouter = require('./routes/categoryRoutes');
+const itemRouter = require("./routes/itemRoutes");
+/*const orderRouter = require("./routes/orderRoutes");
+const categoryRouter = require("./routes/categoryRoutes");*/
+const serviceLocator = require("./utils/service.locator");
+//const slash = require("express-slash");
 
 //console.log(process.env);
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
 }
 
 app.use(express.json());
+//set slash middleware
+//app.use(slash());
+
+// Init services:
+serviceLocator.register(
+  "db",
+  require("knex")({
+    client: process.env.DB_DRIVER,
+    connection: {
+      host: process.env.DB_HOST,
+      user: process.env.DB_USER,
+      password: process.env.DB_PWD,
+      database: process.env.DB_NAME
+    }
+  })
+);
 
 //static html alias test
-app.use('/public', express.static(`${__dirname}/public/`));
+app.use("/public", express.static(`${__dirname}/public/`));
 
 //default
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res
     .status(200)
-    .json({ message: 'hi from the server side', app: 'mindkProject' });
+    .json({ message: "hi from the server side", app: "mindkProject" });
 });
 
 //routes Mounting
-app.use('/api/v1/products', productRouter); //we use a tourRouter middleware for '/api/..' route
-app.use('/api/v1/orders', orderRouter);
-app.use('/api/v1/categories', categoryRouter);
+app.use("/products", itemRouter); //we use a tourRouter middleware for '/api/..' route
+app.use("/orders", itemRouter);
+app.use("/categories", itemRouter);
 
 //wrong route handler
-app.all('*', (req, res, next) => {
+app.all("*", (req, res, next) => {
   res.status(404).json({
     data: {
-      status: 'fail',
-      message: 'not found'
+      status: "fail",
+      message: "not found"
     }
   });
 });
