@@ -1,13 +1,14 @@
 const express = require("express");
-
 const app = express();
 const morgan = require("morgan");
-
-const itemRouter = require("./routes/itemRoutes");
-/*const orderRouter = require("./routes/orderRoutes");
-const categoryRouter = require("./routes/categoryRoutes");*/
+const globalErrorHandler = require("./controllers/errorController.js");
+const productRouter = require("./routes/productRoutes");
+const categoryRouter = require("./routes/categoryRoutes");
+const manufacturerRouter = require("./routes/manufacturerRoutes");
+const deliveryRouter = require("./routes/deliveryRoutes");
+const userRouter = require("./routes/userRoutes");
+const orderRouter = require("./routes/orderRoutes");
 const serviceLocator = require("./utils/service.locator");
-//const slash = require("express-slash");
 
 //console.log(process.env);
 if (process.env.NODE_ENV === "development") {
@@ -15,8 +16,6 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.use(express.json());
-//set slash middleware
-//app.use(slash());
 
 // Init services:
 serviceLocator.register(
@@ -32,9 +31,6 @@ serviceLocator.register(
   })
 );
 
-//static html alias test
-app.use("/public", express.static(`${__dirname}/public/`));
-
 //default
 app.get("/", (req, res) => {
   res
@@ -43,18 +39,23 @@ app.get("/", (req, res) => {
 });
 
 //routes Mounting
-app.use("/products", itemRouter); //we use a tourRouter middleware for '/api/..' route
-app.use("/orders", itemRouter);
-app.use("/categories", itemRouter);
+app.use("/api/products", productRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/manufacturers", manufacturerRouter);
+app.use("/api/deliveries", deliveryRouter);
+app.use("/api/users", userRouter);
+app.use("/api/orders", orderRouter);
 
 //wrong route handler
 app.all("*", (req, res, next) => {
   res.status(404).json({
     data: {
       status: "fail",
-      message: "not found"
+      message: "route not found"
     }
   });
 });
+
+app.use(globalErrorHandler);
 
 module.exports = app;
