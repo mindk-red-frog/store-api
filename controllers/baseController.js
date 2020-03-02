@@ -3,7 +3,7 @@ const AppError = require("./../utils/appError");
 const Tables = require("../models/base.model");
 
 class BaseController {
-  //wrapper to get products table name from router usin closures
+  //wrapper to get all items from table name specified in (routes) usin closures
   static getAllItems = tblname => {
     return catchAsync(async (req, res, next) => {
       res.status(200).send(await new Tables(tblname).getAllList());
@@ -12,8 +12,8 @@ class BaseController {
 
   static createNewItem = tblname => {
     return catchAsync(async (req, res, next) => {
-      const createdTour = await new Tables(tblname).insert(req.body);
-      if (createdTour.rowCount > 0) {
+      const createdItem = await new Tables(tblname).insert(req.body);
+      if (createdItem.rowCount > 0) {
         res.status(200).json({
           status: "success",
           data: req.body

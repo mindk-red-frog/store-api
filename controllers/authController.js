@@ -89,7 +89,7 @@ class UserController extends baseController {
       await sendEmail({
         email: currentUser[0].email,
         message: message,
-        subject: "Your password reset token (valid for 15 minutes)"
+        subject: `Your password reset token (valid for ${process.env.RESET_TOKEN_EXPIRES_IN_MIN} minutes)`
       });
       res.status(200).json({
         status: "succes",
@@ -175,19 +175,20 @@ class UserController extends baseController {
     //looking for email in DB
     const currentUser = await new User(req).findByEmail(email);
     //console.log(currentUser);
-    //we delete all resetTokens details from DB if user succesfully loged in
-    if (currentUser[0].reset_token || currentUser[0].reset_token_expiration) {
-      const nullReset = await new User().update(currentUser[0].id, {
-        reset_token: null,
-        reset_token_expiration: null
-      });
-    }
+
     //check if password is correct
     if (
       typeof currentUser[0] === "undefined" ||
       !(await User.comparePassword(password, currentUser[0].password))
     ) {
       return next(new AppError("Password or login isn't correct", 401));
+    }
+    //we delete all resetTokens details from DB if user succesfully loged in
+    if (currentUser[0].reset_token || currentUser[0].reset_token_expiration) {
+      const nullReset = await new User().update(currentUser[0].id, {
+        reset_token: null,
+        reset_token_expiration: null
+      });
     }
     this.createSendToken(currentUser[0], 201, res);
   });
